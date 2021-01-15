@@ -32,6 +32,14 @@
    * For example, you might define a "--production" parameter for the "rush build" command.
    */
   "parameters": [
+    {
+      "associatedCommands": ["test"],
+      "shortName": "-w",
+      "longName": "--watch",
+      "description": "Watch mode",
+      "required": false,
+      "parameterKind": "flag"
+    }
     // {
     //   /**
     //    * (Required) Determines the type of custom parameter.
