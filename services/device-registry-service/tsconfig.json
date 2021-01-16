@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "noUncheckedIndexedAccess": true
+  }
+}

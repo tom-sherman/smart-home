@@ -17,5 +17,10 @@
     "postRushBuild": []
   },
   "variants": [],
-  "projects": []
+  "projects": [
+    {
+      "packageName": "device-registry-service",
+      "projectFolder": "services/device-registry-service"
+    }
+  ]
 }
