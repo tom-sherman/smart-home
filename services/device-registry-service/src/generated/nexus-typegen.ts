@@ -18,7 +18,6 @@ export interface NexusGenInputs {
   CreateDeviceInputDevice: {
     // input type
     description?: string | null; // String
-    id: string; // ID!
     name?: string | null; // String
     powerSource?: string | null; // String
   };
@@ -74,7 +73,7 @@ export interface NexusGenFieldTypes {
     description: string | null; // String
     exposes: NexusGenRootTypes['Expost']; // Expost!
     id: string; // ID!
-    name: string | null; // String
+    name: string; // String!
     powerSource: string | null; // String
   };
   Expost: {

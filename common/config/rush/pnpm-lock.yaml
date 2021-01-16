@@ -12,19 +12,21 @@ dependencies:
   '@types/mkdirp': 1.0.1
   '@types/react': 16.14.2
   '@types/react-dom': 16.9.10
+  '@types/uuid': 8.3.0
   apollo-server: 2.19.2_graphql@15.4.0
+  async-mqtt: 2.6.1
   graphql: 15.4.0
   graphql-tools: 7.0.2_graphql@15.4.0+react@17.0.1
   leveldown: 5.6.0
   levelup: 4.4.0
   mkdirp: 1.0.4
-  mqtt: 4.2.6
   nexus: 1.0.0_graphql@15.4.0
   nodemon: 2.0.7
   react: 17.0.1
   react-dom: 17.0.1_react@17.0.1
   react-scripts: 4.0.1
   ts-node-dev: 1.1.1
+  uuid: 8.3.2
   web-vitals: 0.2.4
 lockfileVersion: 5.1
 packages:
@@ -2636,6 +2638,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-+/DsiV4CxXl6ZWefwHZDXSe1Slitz21tom38qPCaG0DYCS1NnDPIQDTKcmQ/tvK/edJUKkmuIDBJbmKDiB0r/g==
+  /@types/uuid/8.3.0:
+    dev: false
+    resolution:
+      integrity: sha512-eQ9qFW/fhfGJF8WKHGEHZEyVWfZxrT+6CLIJGBcZPfxUh/+BnEj+UCGYMlr9qZuX/2AltsvwrGqp0LhEW8D0zQ==
   /@types/webpack-sources/2.1.0:
     dependencies:
       '@types/node': 14.14.21
@@ -3802,6 +3808,12 @@ packages:
     dev: false
     resolution:
       integrity: sha512-csOlWGAcRFJaI6m+F2WKdnMKr4HhdhFVBk0H/QbJFMCr+uO2kwohwXQPxw/9OCxp05r5ghVBFSyioixx3gfkNQ==
+  /async-mqtt/2.6.1:
+    dependencies:
+      mqtt: 4.2.6
+    dev: false
+    resolution:
+      integrity: sha512-EkXAwRzwMaPC6ji0EvNeM5OMe6VjMhEKVJJUN7gu/hGzkcDpZtaI34nUwdwCMbjQB3pnuSOHqQMFKsUpg+D8kA==
   /async-retry/1.3.1:
     dependencies:
       retry: 0.12.0
@@ -15016,6 +15028,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-PQ2PC7R9rslx84ndNBZB/Dkv8V8fZEpk83RLgXtYd0fwUgEjseMn1Dgajh2x6S8QbZAFa9p2qVCEuYZNgve0dQ==
+  /zod/1.11.11:
+    dev: false
+    resolution:
+      integrity: sha512-q1YeBpu+c7eUX5fDFMyfP97sD74TUQ+UN8va/nvbxnArr5euYsNO6fjiY0SdDkHKNZ+xBR2ZQToaeLgJ6fsB2A==
   'file:projects/debug-web-ui.tgz':
     dependencies:
       '@testing-library/jest-dom': 5.11.9
@@ -15042,6 +15058,7 @@ packages:
       '@types/levelup': 4.3.0
       '@types/mkdirp': 1.0.1
       '@types/node': 14.14.21
+      '@types/uuid': 8.3.0
       apollo-datasource: 0.7.3
       apollo-server: 2.19.2_graphql@15.4.0
       graphql: 15.4.0
@@ -15054,33 +15071,40 @@ packages:
       nodemon: 2.0.7
       ts-node-dev: 1.1.1_typescript@4.1.3
       typescript: 4.1.3
+      uuid: 8.3.2
     dev: false
     id: 'file:projects/device-registry-service.tgz'
     name: '@rush-temp/device-registry-service'
     peerDependencies:
       react: '*'
     resolution:
-      integrity: sha512-h+EKG2C1xc63AGtCM2tOvLDEh6vMcHwfXSEbPKeUGUyTxddQPjkRrzJ3pCgxINuLvRyO/PdVbEAO1au7e1QH7w==
+      integrity: sha512-D2Yeexmb+0fq6rgcxEBnNYXxPtvdMQkiiyODBghSViqmZic5YpXf7Yu0DDBTcWPXwVYqR1ZV6gKMuEyg6ih4Og==
       tarball: 'file:projects/device-registry-service.tgz'
     version: 0.0.0
   'file:projects/store.tgz':
     dependencies:
+      '@types/mkdirp': 1.0.1
       '@types/node': 14.14.21
+      mkdirp: 1.0.4
+      typescript: 4.1.3
     dev: false
     name: '@rush-temp/store'
     resolution:
-      integrity: sha512-u30QBkyfN0v8qxSSlZW7qLp2d/HhRzvkdp0osoXiBuQPQayP6Mgpl5jnTPVlYHM1ApJ4nhvuvPlNW0I0TZwvaQ==
+      integrity: sha512-N1t4GUN2HQFl3vtIPuF36ePWvYm5ZQZQpieaqCpgOkHbmSmQgDqmUS229CRKOZbYHln7x+Sk1HUtqLyFhdw3fQ==
       tarball: 'file:projects/store.tgz'
     version: 0.0.0
   'file:projects/zigbee2mqtt-controller-service.tgz':
     dependencies:
       '@types/node': 14.14.21
+      async-mqtt: 2.6.1
       mqtt: 4.2.6
-      ts-node-dev: 1.1.1
+      ts-node-dev: 1.1.1_typescript@4.1.3
+      typescript: 4.1.3
+      zod: 1.11.11
     dev: false
     name: '@rush-temp/zigbee2mqtt-controller-service'
     resolution:
-      integrity: sha512-xwp0eg4O2GrKjHJF9qPbzeK6zD2kYiMtVk+LHmOhJiKfTlLWvYsdlRKGR0MPH657SIPsR6h92Uitn1a1v8BGNQ==
+      integrity: sha512-0Zo2B+PBHb9So+ew/X70pSm7nTIKmFfOqpemMjxJ+PZ0F2IscJaffQd0Xx9xl3K5Ahp/DR/TcXyzUhUW1MBv7w==
       tarball: 'file:projects/zigbee2mqtt-controller-service.tgz'
     version: 0.0.0
 registry: ''
@@ -15098,17 +15122,19 @@ specifiers:
   '@types/mkdirp': ~1.0.1
   '@types/react': ^16.9.53
   '@types/react-dom': ^16.9.8
+  '@types/uuid': ~8.3.0
   apollo-server: ^2.19.0
+  async-mqtt: ~2.6.1
   graphql: ^15.4.0
   graphql-tools: ^7.0.2
   leveldown: ~5.6.0
   levelup: ~4.4.0
   mkdirp: ~1.0.4
-  mqtt: ~4.2.6
   nexus: ^1.0.0
   nodemon: ^2.0.6
   react: ^17.0.1
   react-dom: ^17.0.1
   react-scripts: 4.0.1
   ts-node-dev: ^1.1.1
+  uuid: ~8.3.2
   web-vitals: ^0.2.4

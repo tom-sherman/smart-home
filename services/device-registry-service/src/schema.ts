@@ -9,12 +9,13 @@ import {
   arg,
   inputObjectType,
 } from 'nexus';
+import { v4 as uuid } from 'uuid';
 
 export const Device = objectType({
   name: 'Device',
   definition(t) {
     t.string('description');
-    t.string('name');
+    t.nonNull.string('name');
     t.nonNull.id('id');
     t.string('powerSource');
     t.field('exposes', {
@@ -94,7 +95,6 @@ export const Query = queryType({
 export const CreateDeviceInputDevice = inputObjectType({
   name: 'CreateDeviceInputDevice',
   definition(t) {
-    t.nonNull.id('id');
     t.string('description');
     t.string('name');
     t.string('powerSource');
@@ -120,17 +120,19 @@ export const createDevice = mutationField('registerDevice', {
     }),
   },
   resolve: async (_source, { input: { device } }, context) => {
+    const id = uuid();
     const resolvedDevice = {
       ...device,
+      id,
       description: device.description ?? null,
-      name: device.name ?? device.id,
+      name: device.name ?? id,
       powerSource: device.powerSource ?? null,
       exposes: {
         type: 'unknown',
         capabilities: [],
       },
     };
-    await context.store.set(device.id, resolvedDevice);
+    await context.store.set(id, resolvedDevice);
     return resolvedDevice;
   },
 });

@@ -22,7 +22,6 @@ input CreateDeviceInput {
 
 input CreateDeviceInputDevice {
   description: String
-  id: ID!
   name: String
   powerSource: String
 }
@@ -31,7 +30,7 @@ type Device {
   description: String
   exposes: Expost!
   id: ID!
-  name: String
+  name: String!
   powerSource: String
 }
 
