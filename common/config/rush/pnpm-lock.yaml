@@ -1,6 +1,7 @@
 dependencies:
   '@rush-temp/debug-web-ui': 'file:projects/debug-web-ui.tgz'
   '@rush-temp/device-registry-service': 'file:projects/device-registry-service.tgz_react@17.0.1'
+  '@rush-temp/store': 'file:projects/store.tgz'
   '@rush-temp/zigbee2mqtt-controller-service': 'file:projects/zigbee2mqtt-controller-service.tgz'
   '@testing-library/jest-dom': 5.11.9
   '@testing-library/react': 11.2.3_react-dom@17.0.1+react@17.0.1
@@ -15062,6 +15063,15 @@ packages:
       integrity: sha512-h+EKG2C1xc63AGtCM2tOvLDEh6vMcHwfXSEbPKeUGUyTxddQPjkRrzJ3pCgxINuLvRyO/PdVbEAO1au7e1QH7w==
       tarball: 'file:projects/device-registry-service.tgz'
     version: 0.0.0
+  'file:projects/store.tgz':
+    dependencies:
+      '@types/node': 14.14.21
+    dev: false
+    name: '@rush-temp/store'
+    resolution:
+      integrity: sha512-u30QBkyfN0v8qxSSlZW7qLp2d/HhRzvkdp0osoXiBuQPQayP6Mgpl5jnTPVlYHM1ApJ4nhvuvPlNW0I0TZwvaQ==
+      tarball: 'file:projects/store.tgz'
+    version: 0.0.0
   'file:projects/zigbee2mqtt-controller-service.tgz':
     dependencies:
       '@types/node': 14.14.21
@@ -15077,6 +15087,7 @@ registry: ''
 specifiers:
   '@rush-temp/debug-web-ui': 'file:./projects/debug-web-ui.tgz'
   '@rush-temp/device-registry-service': 'file:./projects/device-registry-service.tgz'
+  '@rush-temp/store': 'file:./projects/store.tgz'
   '@rush-temp/zigbee2mqtt-controller-service': 'file:./projects/zigbee2mqtt-controller-service.tgz'
   '@testing-library/jest-dom': ^5.11.4
   '@testing-library/react': ^11.1.0

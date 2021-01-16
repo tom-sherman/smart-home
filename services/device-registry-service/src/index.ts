@@ -2,7 +2,7 @@ import { ApolloServer } from 'apollo-server';
 import * as types from './schema';
 import { makeSchema } from 'nexus';
 import { join } from 'path';
-import { Store } from './store';
+import { Store } from 'store';
 
 const schema = makeSchema({
   types,

@@ -21,6 +21,10 @@
     {
       "packageName": "device-registry-service",
       "projectFolder": "services/device-registry-service"
+    },
+    {
+      "packageName": "store",
+      "projectFolder": "lib/store"
     }
   ]
 }
