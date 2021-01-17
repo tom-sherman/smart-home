@@ -3,6 +3,8 @@ import * as types from './schema';
 import { makeSchema } from 'nexus';
 import { join } from 'path';
 import { Store } from 'store';
+import { ContextType } from './context';
+import { DeviceStore } from './device-store';
 
 const schema = makeSchema({
   types,
@@ -19,11 +21,13 @@ const schema = makeSchema({
   },
 });
 
+const context: ContextType = {
+  store: new DeviceStore(new Store('device_db')),
+};
+
 const server = new ApolloServer({
   schema,
-  context: {
-    store: new Store('device_db'),
-  },
+  context,
 });
 
 server.listen({ port: 4000 }).then(() => {
