@@ -2,6 +2,7 @@ export interface Device {
   description: string | null;
   name: string;
   id: string;
+  controller: string;
   // TODO: Enum?
   powerSource: string | null;
   exposes: {

@@ -1,6 +1,5 @@
-import { Device } from './sourceTypes';
-import { Store } from 'store';
+import { DeviceStore } from './device-store';
 
 export interface ContextType {
-  store: Store<Device>;
+  store: DeviceStore;
 }

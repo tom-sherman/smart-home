@@ -25,6 +25,14 @@
     {
       "packageName": "store",
       "projectFolder": "lib/store"
+    },
+    {
+      "packageName": "debug-web-ui",
+      "projectFolder": "app/debug-web-ui"
+    },
+    {
+      "packageName": "zigbee2mqtt-controller-service",
+      "projectFolder": "services/zigbee2mqtt-controller-service"
     }
   ]
 }

@@ -17,6 +17,7 @@ type BinaryCapability {
 union Capability = BinaryCapability | NumericCapability
 
 input CreateDeviceInput {
+  controller: String!
   device: CreateDeviceInputDevice!
 }
 
@@ -26,7 +27,13 @@ input CreateDeviceInputDevice {
   powerSource: String
 }
 
+input CreateManyDevicesInput {
+  controller: String!
+  devices: [CreateDeviceInputDevice!]!
+}
+
 type Device {
+  controller: String!
   description: String
   exposes: Expost!
   id: ID!
@@ -44,6 +51,13 @@ type Mutation {
   Register a new device or re-register (override) an existing one
   """
   registerDevice(input: CreateDeviceInput!): Device
+  registerManyDevices(input: CreateManyDevicesInput!): [Device]
+  unregisterAllDevicesForController(
+    input: UnregisterAllDevicesForControllerInput!
+  ): UnregisterManyDevicesResult
+  unregisterManyDevices(
+    input: UnregisterManyDevicesInput!
+  ): UnregisterManyDevicesResult
 }
 
 type NumericCapability {
@@ -58,4 +72,20 @@ type NumericCapability {
 
 type Query {
   allDevices: [Device!]!
+}
+
+input UnregisterAllDevicesForControllerInput {
+  controller: String!
+}
+
+input UnregisterDeviceInputDevice {
+  id: ID!
+}
+
+input UnregisterManyDevicesInput {
+  devices: [UnregisterDeviceInputDevice!]!
+}
+
+type UnregisterManyDevicesResult {
+  deletedDeviceIds: [String]!
 }

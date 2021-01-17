@@ -14,11 +14,13 @@ Services like in the `/services` directory.
 
 ### device-registry
 
-This service manages which devices are connected to the network, what capabilities they have, and what controller (more on these later) controls them.
+This service manages which devices are connected to the network, what capabilities they have, and which controller (more on these later) controls them.
 
 ### Controllers
 
 By convention these have names that follow the format `{NAME}-controller-service`, they know how get and update state of IoT devices of a particular protocol.
+
+They are also responsible for registering and unregistering devices from the device-registry service.
 
 ## Libraries
 

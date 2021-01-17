@@ -13,6 +13,7 @@ declare global {
 export interface NexusGenInputs {
   CreateDeviceInput: {
     // input type
+    controller: string; // String!
     device: NexusGenInputs['CreateDeviceInputDevice']; // CreateDeviceInputDevice!
   };
   CreateDeviceInputDevice: {
@@ -20,6 +21,23 @@ export interface NexusGenInputs {
     description?: string | null; // String
     name?: string | null; // String
     powerSource?: string | null; // String
+  };
+  CreateManyDevicesInput: {
+    // input type
+    controller: string; // String!
+    devices: NexusGenInputs['CreateDeviceInputDevice'][]; // [CreateDeviceInputDevice!]!
+  };
+  UnregisterAllDevicesForControllerInput: {
+    // input type
+    controller: string; // String!
+  };
+  UnregisterDeviceInputDevice: {
+    // input type
+    id: string; // ID!
+  };
+  UnregisterManyDevicesInput: {
+    // input type
+    devices: NexusGenInputs['UnregisterDeviceInputDevice'][]; // [UnregisterDeviceInputDevice!]!
   };
 }
 
@@ -46,6 +64,10 @@ export interface NexusGenObjects {
   Mutation: {};
   NumericCapability: t.NumericCapability;
   Query: {};
+  UnregisterManyDevicesResult: {
+    // root type
+    deletedDeviceIds: Array<string | null>; // [String]!
+  };
 }
 
 export interface NexusGenInterfaces {}
@@ -70,6 +92,7 @@ export interface NexusGenFieldTypes {
   };
   Device: {
     // field return type
+    controller: string; // String!
     description: string | null; // String
     exposes: NexusGenRootTypes['Expost']; // Expost!
     id: string; // ID!
@@ -84,6 +107,13 @@ export interface NexusGenFieldTypes {
   Mutation: {
     // field return type
     registerDevice: NexusGenRootTypes['Device'] | null; // Device
+    registerManyDevices: Array<NexusGenRootTypes['Device'] | null> | null; // [Device]
+    unregisterAllDevicesForController:
+      | NexusGenRootTypes['UnregisterManyDevicesResult']
+      | null; // UnregisterManyDevicesResult
+    unregisterManyDevices:
+      | NexusGenRootTypes['UnregisterManyDevicesResult']
+      | null; // UnregisterManyDevicesResult
   };
   NumericCapability: {
     // field return type
@@ -99,6 +129,10 @@ export interface NexusGenFieldTypes {
     // field return type
     allDevices: NexusGenRootTypes['Device'][]; // [Device!]!
   };
+  UnregisterManyDevicesResult: {
+    // field return type
+    deletedDeviceIds: Array<string | null>; // [String]!
+  };
 }
 
 export interface NexusGenFieldTypeNames {
@@ -111,6 +145,7 @@ export interface NexusGenFieldTypeNames {
   };
   Device: {
     // field return type name
+    controller: 'String';
     description: 'String';
     exposes: 'Expost';
     id: 'ID';
@@ -125,6 +160,9 @@ export interface NexusGenFieldTypeNames {
   Mutation: {
     // field return type name
     registerDevice: 'Device';
+    registerManyDevices: 'Device';
+    unregisterAllDevicesForController: 'UnregisterManyDevicesResult';
+    unregisterManyDevices: 'UnregisterManyDevicesResult';
   };
   NumericCapability: {
     // field return type name
@@ -140,6 +178,10 @@ export interface NexusGenFieldTypeNames {
     // field return type name
     allDevices: 'Device';
   };
+  UnregisterManyDevicesResult: {
+    // field return type name
+    deletedDeviceIds: 'String';
+  };
 }
 
 export interface NexusGenArgTypes {
@@ -147,6 +189,18 @@ export interface NexusGenArgTypes {
     registerDevice: {
       // args
       input: NexusGenInputs['CreateDeviceInput']; // CreateDeviceInput!
+    };
+    registerManyDevices: {
+      // args
+      input: NexusGenInputs['CreateManyDevicesInput']; // CreateManyDevicesInput!
+    };
+    unregisterAllDevicesForController: {
+      // args
+      input: NexusGenInputs['UnregisterAllDevicesForControllerInput']; // UnregisterAllDevicesForControllerInput!
+    };
+    unregisterManyDevices: {
+      // args
+      input: NexusGenInputs['UnregisterManyDevicesInput']; // UnregisterManyDevicesInput!
     };
   };
 }

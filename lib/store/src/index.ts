@@ -4,6 +4,10 @@ import mkdirp from 'mkdirp';
 
 const dataFileName = 'data.json';
 
+type BatchOperations<T> =
+  | { type: 'set'; key: string; value: T }
+  | { type: 'delete'; key: string };
+
 export class Store<T> {
   private readonly location: string;
   private readonly dataFileLocation: string;
@@ -31,6 +35,10 @@ export class Store<T> {
     return JSON.parse(file) as Record<string, T>;
   }
 
+  private async writeStore(store: Record<string, T>): Promise<void> {
+    await fs.writeFile(this.dataFileLocation, JSON.stringify(store));
+  }
+
   async get(key: string): Promise<T | null> {
     await this.connect();
     const store = await this.getAll();
@@ -43,7 +51,7 @@ export class Store<T> {
     const store = await this.getAll();
     store[key] = value;
 
-    await fs.writeFile(this.dataFileLocation, JSON.stringify(store));
+    await this.writeStore(store);
   }
 
   async delete(key: string): Promise<void> {
@@ -51,7 +59,7 @@ export class Store<T> {
     const store = await this.getAll();
     delete store[key];
 
-    await fs.writeFile(this.dataFileLocation, JSON.stringify(store));
+    await this.writeStore(store);
   }
 
   async keys(): Promise<string[]> {
@@ -62,5 +70,22 @@ export class Store<T> {
   async values(): Promise<T[]> {
     await this.connect();
     return Object.values(await this.getAll());
+  }
+
+  async batch(ops: BatchOperations<T>[]): Promise<void> {
+    const store = await this.getAll();
+
+    for (const op of ops) {
+      if (op.type === 'set') {
+        store[op.key] = op.value;
+      } else if (op.type === 'delete') {
+        delete store[op.key];
+      } else {
+        // @ts-expect-error Expect an error here in case we ever add a new op type, this will not compile.
+        throw new Error(`Unexpected operation type "${op.type}"`);
+      }
+    }
+
+    this.writeStore(store);
   }
 }
