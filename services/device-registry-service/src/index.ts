@@ -1,5 +1,6 @@
 import { ApolloServer } from 'apollo-server';
-import * as types from './schema';
+import * as types from './schema/schema';
+import * as registeringTypes from './schema/registering';
 import { makeSchema } from 'nexus';
 import { join } from 'path';
 import { Store } from 'store';
@@ -7,7 +8,7 @@ import { ContextType } from './context';
 import { DeviceStore } from './device-store';
 
 const schema = makeSchema({
-  types,
+  types: [types, registeringTypes],
   outputs: {
     typegen: join(__dirname, 'generated', 'nexus-typegen.ts'), // 2
     schema: join(__dirname, 'generated', 'schema.graphql'), // 3
