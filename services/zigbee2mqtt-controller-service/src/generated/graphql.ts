@@ -28,6 +28,7 @@ export type Device = {
   id: Scalars['ID'];
   powerSource?: Maybe<Scalars['String']>;
   exposes: Expost;
+  controller: Scalars['String'];
 };
 
 export type Expost = {
@@ -76,10 +77,29 @@ export type CreateDeviceInputDevice = {
 
 export type CreateDeviceInput = {
   device: CreateDeviceInputDevice;
+  controller: Scalars['String'];
 };
 
 export type CreateManyDevicesInput = {
   devices: Array<CreateDeviceInputDevice>;
+  controller: Scalars['String'];
+};
+
+export type UnregisterDeviceInputDevice = {
+  id: Scalars['ID'];
+};
+
+export type UnregisterManyDevicesInput = {
+  devices: Array<UnregisterDeviceInputDevice>;
+};
+
+export type UnregisterManyDevicesResult = {
+  __typename?: 'UnregisterManyDevicesResult';
+  deletedDeviceIds: Array<Maybe<Scalars['String']>>;
+};
+
+export type UnregisterAllDevicesForControllerInput = {
+  controller: Scalars['String'];
 };
 
 export type Mutation = {
@@ -87,6 +107,8 @@ export type Mutation = {
   /** Register a new device or re-register (override) an existing one */
   registerDevice?: Maybe<Device>;
   registerManyDevices?: Maybe<Array<Maybe<Device>>>;
+  unregisterManyDevices?: Maybe<UnregisterManyDevicesResult>;
+  unregisterAllDevicesForController?: Maybe<UnregisterManyDevicesResult>;
 };
 
 export type MutationRegisterDeviceArgs = {
@@ -95,6 +117,14 @@ export type MutationRegisterDeviceArgs = {
 
 export type MutationRegisterManyDevicesArgs = {
   input: CreateManyDevicesInput;
+};
+
+export type MutationUnregisterManyDevicesArgs = {
+  input: UnregisterManyDevicesInput;
+};
+
+export type MutationUnregisterAllDevicesForControllerArgs = {
+  input: UnregisterAllDevicesForControllerInput;
 };
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
@@ -232,6 +262,10 @@ export type ResolversTypes = {
   CreateDeviceInputDevice: CreateDeviceInputDevice;
   CreateDeviceInput: CreateDeviceInput;
   CreateManyDevicesInput: CreateManyDevicesInput;
+  UnregisterDeviceInputDevice: UnregisterDeviceInputDevice;
+  UnregisterManyDevicesInput: UnregisterManyDevicesInput;
+  UnregisterManyDevicesResult: ResolverTypeWrapper<UnregisterManyDevicesResult>;
+  UnregisterAllDevicesForControllerInput: UnregisterAllDevicesForControllerInput;
   Mutation: ResolverTypeWrapper<{}>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 };
@@ -254,6 +288,10 @@ export type ResolversParentTypes = {
   CreateDeviceInputDevice: CreateDeviceInputDevice;
   CreateDeviceInput: CreateDeviceInput;
   CreateManyDevicesInput: CreateManyDevicesInput;
+  UnregisterDeviceInputDevice: UnregisterDeviceInputDevice;
+  UnregisterManyDevicesInput: UnregisterManyDevicesInput;
+  UnregisterManyDevicesResult: UnregisterManyDevicesResult;
+  UnregisterAllDevicesForControllerInput: UnregisterAllDevicesForControllerInput;
   Mutation: {};
   Boolean: Scalars['Boolean'];
 };
@@ -275,6 +313,7 @@ export type DeviceResolvers<
     ContextType
   >;
   exposes?: Resolver<ResolversTypes['Expost'], ParentType, ContextType>;
+  controller?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -346,6 +385,18 @@ export type QueryResolvers<
   >;
 };
 
+export type UnregisterManyDevicesResultResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['UnregisterManyDevicesResult'] = ResolversParentTypes['UnregisterManyDevicesResult']
+> = {
+  deletedDeviceIds?: Resolver<
+    Array<Maybe<ResolversTypes['String']>>,
+    ParentType,
+    ContextType
+  >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MutationResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
@@ -362,6 +413,18 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationRegisterManyDevicesArgs, 'input'>
   >;
+  unregisterManyDevices?: Resolver<
+    Maybe<ResolversTypes['UnregisterManyDevicesResult']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationUnregisterManyDevicesArgs, 'input'>
+  >;
+  unregisterAllDevicesForController?: Resolver<
+    Maybe<ResolversTypes['UnregisterManyDevicesResult']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationUnregisterAllDevicesForControllerArgs, 'input'>
+  >;
 };
 
 export type Resolvers<ContextType = any> = {
@@ -371,6 +434,7 @@ export type Resolvers<ContextType = any> = {
   NumericCapability?: NumericCapabilityResolvers<ContextType>;
   Capability?: CapabilityResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  UnregisterManyDevicesResult?: UnregisterManyDevicesResultResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
 };
 
