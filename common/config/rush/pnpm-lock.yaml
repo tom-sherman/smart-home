@@ -23,6 +23,7 @@ dependencies:
   nexus: 1.0.0
   node-fetch: 2.6.1
   nodemon: 2.0.7
+  prettier: 2.2.1
   react: 17.0.1
   react-dom: 17.0.1_react@17.0.1
   react-scripts: 4.0.1
@@ -13260,6 +13261,13 @@ packages:
       node: '>=4'
     resolution:
       integrity: sha1-6SQ0v6XqjBn0HN/UAddBo8gZ2Jc=
+  /prettier/2.2.1:
+    dev: false
+    engines:
+      node: '>=10.13.0'
+    hasBin: true
+    resolution:
+      integrity: sha512-PqyhM2yCjg/oKkFPtTGUojv7gnZAoG80ttl45O6x2Ug/rMJw4wcc9k6aaf2hibP7BGVCCM33gZoGjyvt9mm16Q==
   /pretty-bytes/5.5.0:
     dev: false
     engines:
@@ -16941,6 +16949,7 @@ packages:
       mkdirp: 1.0.4
       nexus: 1.0.0_graphql@15.4.0
       nodemon: 2.0.7
+      prettier: 2.2.1
       ts-node-dev: 1.1.1_typescript@4.1.3
       typescript: 4.1.3
       uuid: 8.3.2
@@ -16950,7 +16959,7 @@ packages:
     peerDependencies:
       react: '*'
     resolution:
-      integrity: sha512-O9bxARAEuTQgLyHsX/inTTGjMToO5yS9fGQcHQqjvgzVz9pBqCGnlTfYhJZ6wC5bWbUp8HvrMXdYsSGmXh4tEw==
+      integrity: sha512-0JQXbOCZKUp8CH4PsIZJaevlOl338AZC2NcwYm/oq0X+xYM3csUxTLmYlerXNVswHW8trsVq6UwmeBBB3d9dqQ==
       tarball: 'file:projects/device-registry-service.tgz'
     version: 0.0.0
   'file:projects/store.tgz':
@@ -17012,6 +17021,7 @@ specifiers:
   nexus: ^1.0.0
   node-fetch: ~2.6.1
   nodemon: ^2.0.6
+  prettier: ~2.2.1
   react: ^17.0.1
   react-dom: ^17.0.1
   react-scripts: 4.0.1

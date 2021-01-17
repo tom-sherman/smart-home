@@ -19,6 +19,10 @@ const schema = makeSchema({
     module: join(__dirname, 'context.ts'),
     export: 'ContextType',
   },
+  prettierConfig: {
+    semi: true,
+    singleQuote: true,
+  },
 });
 
 const context: ContextType = {
@@ -28,6 +32,7 @@ const context: ContextType = {
 const server = new ApolloServer({
   schema,
   context,
+  tracing: true,
 });
 
 server.listen({ port: 4000 }).then(() => {
