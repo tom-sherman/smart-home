@@ -5,10 +5,7 @@ export interface Device {
   controller: string;
   // TODO: Enum?
   powerSource: string | null;
-  exposes: {
-    type: string;
-    capabilities: Capability[];
-  };
+  capabilities: Capability[];
 }
 
 export enum Access {

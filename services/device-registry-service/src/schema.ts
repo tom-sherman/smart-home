@@ -10,7 +10,7 @@ import {
   inputObjectType,
 } from 'nexus';
 import { v4 as uuid } from 'uuid';
-import { NexusGenInputs, NexusGenRootTypes } from './generated/nexus-typegen';
+import { NexusGenInputs } from './generated/nexus-typegen';
 
 export const Device = objectType({
   name: 'Device',
@@ -19,20 +19,10 @@ export const Device = objectType({
     t.nonNull.string('name');
     t.nonNull.id('id');
     t.string('powerSource');
-    t.field('exposes', {
-      type: nonNull(Expose),
-    });
-    t.nonNull.string('controller');
-  },
-});
-
-export const Expose = objectType({
-  name: 'Expost',
-  definition(t) {
-    t.nonNull.string('type');
     t.field('capabilities', {
       type: nonNull(list(Capability)),
     });
+    t.nonNull.string('controller');
   },
 });
 
@@ -138,7 +128,11 @@ export const createDevice = mutationField('registerDevice', {
     }),
   },
   resolve: async (_source, { input: { device, controller } }, context) => {
-    const resolvedDevice = { ...mapInputDevice(device), controller };
+    const resolvedDevice = {
+      ...mapInputDevice(device),
+      controller,
+      capabilities: [],
+    };
     await context.store.createOrUpdateDevices([
       {
         id: resolvedDevice.id,
@@ -170,6 +164,7 @@ export const registerManyDevices = mutationField('registerManyDevices', {
     const resolvedDevices = devices.map((device) => ({
       ...mapInputDevice(device),
       controller,
+      capabilities: [],
     }));
 
     await context.store.createOrUpdateDevices(

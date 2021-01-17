@@ -25,7 +25,7 @@ export type Capability =
   | {
       type: 'light';
       access: number;
-      features: Capability[];
+      features: Exclude<Capability, { type: 'light' }>[];
     }
   | {
       type: 'numeric';

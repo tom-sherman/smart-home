@@ -27,14 +27,8 @@ export type Device = {
   name: Scalars['String'];
   id: Scalars['ID'];
   powerSource?: Maybe<Scalars['String']>;
-  exposes: Expost;
-  controller: Scalars['String'];
-};
-
-export type Expost = {
-  __typename?: 'Expost';
-  type: Scalars['String'];
   capabilities: Array<Maybe<Capability>>;
+  controller: Scalars['String'];
 };
 
 export enum Access {
@@ -243,14 +237,13 @@ export type DirectiveResolverFn<
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  Device: ResolverTypeWrapper<Device>;
-  String: ResolverTypeWrapper<Scalars['String']>;
-  ID: ResolverTypeWrapper<Scalars['ID']>;
-  Expost: ResolverTypeWrapper<
-    Omit<Expost, 'capabilities'> & {
+  Device: ResolverTypeWrapper<
+    Omit<Device, 'capabilities'> & {
       capabilities: Array<Maybe<ResolversTypes['Capability']>>;
     }
   >;
+  String: ResolverTypeWrapper<Scalars['String']>;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
   Access: Access;
   BinaryCapability: ResolverTypeWrapper<BinaryCapability>;
   NumericCapability: ResolverTypeWrapper<NumericCapability>;
@@ -272,12 +265,11 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  Device: Device;
-  String: Scalars['String'];
-  ID: Scalars['ID'];
-  Expost: Omit<Expost, 'capabilities'> & {
+  Device: Omit<Device, 'capabilities'> & {
     capabilities: Array<Maybe<ResolversParentTypes['Capability']>>;
   };
+  String: Scalars['String'];
+  ID: Scalars['ID'];
   BinaryCapability: BinaryCapability;
   NumericCapability: NumericCapability;
   Float: Scalars['Float'];
@@ -312,21 +304,12 @@ export type DeviceResolvers<
     ParentType,
     ContextType
   >;
-  exposes?: Resolver<ResolversTypes['Expost'], ParentType, ContextType>;
-  controller?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type ExpostResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['Expost'] = ResolversParentTypes['Expost']
-> = {
-  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   capabilities?: Resolver<
     Array<Maybe<ResolversTypes['Capability']>>,
     ParentType,
     ContextType
   >;
+  controller?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -429,7 +412,6 @@ export type MutationResolvers<
 
 export type Resolvers<ContextType = any> = {
   Device?: DeviceResolvers<ContextType>;
-  Expost?: ExpostResolvers<ContextType>;
   BinaryCapability?: BinaryCapabilityResolvers<ContextType>;
   NumericCapability?: NumericCapabilityResolvers<ContextType>;
   Capability?: CapabilityResolvers<ContextType>;

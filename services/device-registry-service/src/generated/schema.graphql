@@ -33,17 +33,12 @@ input CreateManyDevicesInput {
 }
 
 type Device {
+  capabilities: [Capability]!
   controller: String!
   description: String
-  exposes: Expost!
   id: ID!
   name: String!
   powerSource: String
-}
-
-type Expost {
-  capabilities: [Capability]!
-  type: String!
 }
 
 type Mutation {

@@ -56,11 +56,6 @@ export interface NexusGenScalars {
 export interface NexusGenObjects {
   BinaryCapability: t.BinaryCapability;
   Device: t.Device;
-  Expost: {
-    // root type
-    capabilities: Array<NexusGenRootTypes['Capability'] | null>; // [Capability]!
-    type: string; // String!
-  };
   Mutation: {};
   NumericCapability: t.NumericCapability;
   Query: {};
@@ -92,17 +87,12 @@ export interface NexusGenFieldTypes {
   };
   Device: {
     // field return type
+    capabilities: Array<NexusGenRootTypes['Capability'] | null>; // [Capability]!
     controller: string; // String!
     description: string | null; // String
-    exposes: NexusGenRootTypes['Expost']; // Expost!
     id: string; // ID!
     name: string; // String!
     powerSource: string | null; // String
-  };
-  Expost: {
-    // field return type
-    capabilities: Array<NexusGenRootTypes['Capability'] | null>; // [Capability]!
-    type: string; // String!
   };
   Mutation: {
     // field return type
@@ -145,17 +135,12 @@ export interface NexusGenFieldTypeNames {
   };
   Device: {
     // field return type name
+    capabilities: 'Capability';
     controller: 'String';
     description: 'String';
-    exposes: 'Expost';
     id: 'ID';
     name: 'String';
     powerSource: 'String';
-  };
-  Expost: {
-    // field return type name
-    capabilities: 'Capability';
-    type: 'String';
   };
   Mutation: {
     // field return type name
