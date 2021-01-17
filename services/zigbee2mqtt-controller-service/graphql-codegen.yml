@@ -7,3 +7,6 @@ generates:
       - 'typescript'
       - 'typescript-resolvers'
       - 'typescript-operations'
+hooks:
+  afterAllFileWrite:
+    - prettier --write
