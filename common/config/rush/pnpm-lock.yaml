@@ -1,8 +1,6 @@
 dependencies:
   '@graphql-codegen/cli': 1.20.0
-  '@graphql-codegen/introspection': 1.18.1
   '@graphql-codegen/typescript': 1.20.0
-  '@graphql-codegen/typescript-graphql-request': 3.0.0
   '@graphql-codegen/typescript-operations': 1.17.13
   '@graphql-codegen/typescript-resolvers': 1.18.1
   '@rush-temp/debug-web-ui': 'file:projects/debug-web-ui.tgz'
@@ -13,19 +11,17 @@ dependencies:
   '@testing-library/react': 11.2.3_react-dom@17.0.1+react@17.0.1
   '@testing-library/user-event': 12.6.0
   '@types/jest': 26.0.20
-  '@types/leveldown': 4.0.2
-  '@types/levelup': 4.3.0
   '@types/mkdirp': 1.0.1
+  '@types/node-fetch': 2.5.8
   '@types/react': 16.14.2
   '@types/react-dom': 16.9.10
   '@types/uuid': 8.3.0
   apollo-server: 2.19.2
   async-mqtt: 2.6.1
   graphql-tools: 7.0.2_react@17.0.1
-  leveldown: 5.6.0
-  levelup: 4.4.0
   mkdirp: 1.0.4
   nexus: 1.0.0
+  node-fetch: 2.6.1
   nodemon: 2.0.7
   react: 17.0.1
   react-dom: 17.0.1_react@17.0.1
@@ -1569,15 +1565,6 @@ packages:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0
     resolution:
       integrity: sha512-7nwy+bMWqb0iYJ2DKxA9UiE16meeJ2Ch2XWS/N/ZnA0snTR+GZ20USI8z6YqP1Fuist7LvGO1MbitO2qBT8raA==
-  /@graphql-codegen/introspection/1.18.1:
-    dependencies:
-      '@graphql-codegen/plugin-helpers': 1.18.2
-      tslib: 2.0.3
-    dev: false
-    peerDependencies:
-      graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0
-    resolution:
-      integrity: sha512-M8kLUYF+YA/oj378RHh7BN5hO2wdplBfL2oyRL9sxjtNY30iYGn7To3TRijDCNoXaak5jLwgwUURZ0BZgX6IJA==
   /@graphql-codegen/introspection/1.18.1_graphql@15.4.0:
     dependencies:
       '@graphql-codegen/plugin-helpers': 1.18.2_graphql@15.4.0
@@ -1625,18 +1612,6 @@ packages:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0
     resolution:
       integrity: sha512-SvX+Ryq2naLcoD6jJNxtzc/moWTgHJ+X0KRfvhGWTa+xtFTS02i+PWOR89YYPcD8+LF6GmyFBjx2FmLCx4JwMg==
-  /@graphql-codegen/typescript-graphql-request/3.0.0:
-    dependencies:
-      '@graphql-codegen/plugin-helpers': 1.18.2
-      '@graphql-codegen/visitor-plugin-common': 1.18.0
-      auto-bind: 4.0.0
-      tslib: 2.0.3
-    dev: false
-    peerDependencies:
-      graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0
-      graphql-tag: ^2.0.0
-    resolution:
-      integrity: sha512-W2GF0SAPJAd7t8yQWKBgIp9XaKad56YcThvpe2qxaMGrM0L9Y7dK91csad0SFxhm5kmkPcDnAodIVr2VplSKNw==
   /@graphql-codegen/typescript-graphql-request/3.0.0_graphql@15.4.0:
     dependencies:
       '@graphql-codegen/plugin-helpers': 1.18.2_graphql@15.4.0
@@ -3355,6 +3330,13 @@ packages:
     dev: false
     resolution:
       integrity: sha512-o2WVNf5UhWRkxlf6eq+jMZDu7kjgpgJfl4xVNlvryc95O/6F2ld8ztKX+qu+Rjyet93WAWm5LjeX9H5FGkODvw==
+  /@types/node-fetch/2.5.8:
+    dependencies:
+      '@types/node': 14.14.21
+      form-data: 3.0.0
+    dev: false
+    resolution:
+      integrity: sha512-fbjI6ja0N5ZA8TV53RUqzsKNkl9fv8Oj3T7zxW7FGv1GSH7gwJaNF8dzCjrqKaxKeUpTz4yT1DaJFq/omNpGfw==
   /@types/node/10.17.51:
     dev: false
     resolution:
@@ -16968,7 +16950,7 @@ packages:
     peerDependencies:
       react: '*'
     resolution:
-      integrity: sha512-D2Yeexmb+0fq6rgcxEBnNYXxPtvdMQkiiyODBghSViqmZic5YpXf7Yu0DDBTcWPXwVYqR1ZV6gKMuEyg6ih4Og==
+      integrity: sha512-O9bxARAEuTQgLyHsX/inTTGjMToO5yS9fGQcHQqjvgzVz9pBqCGnlTfYhJZ6wC5bWbUp8HvrMXdYsSGmXh4tEw==
       tarball: 'file:projects/device-registry-service.tgz'
     version: 0.0.0
   'file:projects/store.tgz':
@@ -16992,22 +16974,22 @@ packages:
       '@graphql-codegen/typescript-operations': 1.17.13_graphql@15.4.0
       '@graphql-codegen/typescript-resolvers': 1.18.1_graphql@15.4.0
       '@types/node': 14.14.21
+      '@types/node-fetch': 2.5.8
       async-mqtt: 2.6.1
       graphql: 15.4.0
+      node-fetch: 2.6.1
       ts-node-dev: 1.1.1_typescript@4.1.3
       typescript: 4.1.3
     dev: false
     name: '@rush-temp/zigbee2mqtt-controller-service'
     resolution:
-      integrity: sha512-bnR7c3oxBfWnXPINvlrdVmVwdPE5BYAgaXi9nsBetuSKTpBQ149/4lPyk9JeeQZA95TElRZ+1eTWWlkTAI7wOg==
+      integrity: sha512-B1P5W2NyA/fMGJr/HDu2m+MKWLDSDWjXIwtCPu/IF4l58M/zEE+azH6uTV1Qne/1D90ShbXCx5F7qBd1sMNBFA==
       tarball: 'file:projects/zigbee2mqtt-controller-service.tgz'
     version: 0.0.0
 registry: ''
 specifiers:
   '@graphql-codegen/cli': 1.20.0
-  '@graphql-codegen/introspection': 1.18.1
   '@graphql-codegen/typescript': 1.20.0
-  '@graphql-codegen/typescript-graphql-request': ~3.0.0
   '@graphql-codegen/typescript-operations': ~1.17.13
   '@graphql-codegen/typescript-resolvers': 1.18.1
   '@rush-temp/debug-web-ui': 'file:./projects/debug-web-ui.tgz'
@@ -17018,19 +17000,17 @@ specifiers:
   '@testing-library/react': ^11.1.0
   '@testing-library/user-event': ^12.1.10
   '@types/jest': ^26.0.15
-  '@types/leveldown': ~4.0.2
-  '@types/levelup': ~4.3.0
   '@types/mkdirp': ~1.0.1
+  '@types/node-fetch': ~2.5.8
   '@types/react': ^16.9.53
   '@types/react-dom': ^16.9.8
   '@types/uuid': ~8.3.0
   apollo-server: ^2.19.0
   async-mqtt: ~2.6.1
   graphql-tools: ^7.0.2
-  leveldown: ~5.6.0
-  levelup: ~4.4.0
   mkdirp: ~1.0.4
   nexus: ^1.0.0
+  node-fetch: ~2.6.1
   nodemon: ^2.0.6
   react: ^17.0.1
   react-dom: ^17.0.1

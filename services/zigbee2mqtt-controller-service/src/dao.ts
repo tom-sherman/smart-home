@@ -4,7 +4,6 @@ import { Device } from './generated/graphql';
 
 interface DeviceRecord {
   bridgeDevice: BridgeDevice;
-  device: Device;
 }
 
 export class Dao {
