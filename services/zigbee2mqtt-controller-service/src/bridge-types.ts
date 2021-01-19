@@ -21,11 +21,16 @@ export type BridgeDevice = BridgeDeviceProperties &
       }
   );
 
+export type SupportedBridgeDevice = BridgeDevice & { supported: true };
+
+export type NonLightCapability = Exclude<Capability, { type: 'light' }>;
+
 export type Capability =
   | {
+      // For some reason some lights have a light capability that has multiple capabilities nested within?? Weird!
       type: 'light';
       access: number;
-      features: Exclude<Capability, { type: 'light' }>[];
+      features: NonLightCapability[];
     }
   | {
       type: 'numeric';
@@ -35,9 +40,12 @@ export type Capability =
       value_max: number;
       value_min: number;
       unit: string;
+      description: string;
     }
   | {
       type: 'binary';
+      description: string;
+      access: number;
       property: string;
       name: string;
       value_on: 'string';
@@ -46,6 +54,8 @@ export type Capability =
     }
   | {
       type: 'enum';
+      description: string;
+      access: number;
       property: string;
       name: string;
       values: string[];

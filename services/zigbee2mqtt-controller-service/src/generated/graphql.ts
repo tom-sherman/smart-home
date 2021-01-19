@@ -56,7 +56,16 @@ export type NumericCapability = {
   unit?: Maybe<Scalars['String']>;
 };
 
-export type Capability = BinaryCapability | NumericCapability;
+export type EnumCapability = {
+  __typename?: 'EnumCapability';
+  type: Scalars['String'];
+  property: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  access: Access;
+  values: Array<Maybe<Scalars['String']>>;
+};
+
+export type Capability = BinaryCapability | NumericCapability | EnumCapability;
 
 export type Query = {
   __typename?: 'Query';
@@ -67,6 +76,7 @@ export type CreateDeviceInputDevice = {
   description?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   powerSource?: Maybe<Scalars['String']>;
+  capabilities?: Maybe<Array<CapabilityInputObject>>;
 };
 
 export type CreateDeviceInput = {
@@ -90,6 +100,40 @@ export type UnregisterManyDevicesInput = {
 export type UnregisterManyDevicesResult = {
   __typename?: 'UnregisterManyDevicesResult';
   deletedDeviceIds: Array<Maybe<Scalars['String']>>;
+};
+
+/**
+ * This is basically a workaround for GraphQL not having input unions. Ideally we would describe this type as
+ * BinaryCapabilityInput | NumericCapabilityInput, instead we define an object with an optional key for each capability
+ * type. This accomplishes the same thing as a union here because a device can have more than one capability, and more
+ * than one capability of the same type.
+ */
+export type CapabilityInputObject = {
+  binary?: Maybe<BinaryCapabilityInput>;
+  numeric?: Maybe<NumericCapabilityInput>;
+  enum?: Maybe<EnumCapabilityInput>;
+};
+
+export type BinaryCapabilityInput = {
+  property: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  access: Access;
+};
+
+export type NumericCapabilityInput = {
+  property: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  access: Access;
+  min?: Maybe<Scalars['Float']>;
+  max?: Maybe<Scalars['Float']>;
+  unit?: Maybe<Scalars['String']>;
+};
+
+export type EnumCapabilityInput = {
+  property: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  access: Access;
+  values?: Maybe<Array<Scalars['String']>>;
 };
 
 export type UnregisterAllDevicesForControllerInput = {
@@ -248,9 +292,11 @@ export type ResolversTypes = {
   BinaryCapability: ResolverTypeWrapper<BinaryCapability>;
   NumericCapability: ResolverTypeWrapper<NumericCapability>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
+  EnumCapability: ResolverTypeWrapper<EnumCapability>;
   Capability:
     | ResolversTypes['BinaryCapability']
-    | ResolversTypes['NumericCapability'];
+    | ResolversTypes['NumericCapability']
+    | ResolversTypes['EnumCapability'];
   Query: ResolverTypeWrapper<{}>;
   CreateDeviceInputDevice: CreateDeviceInputDevice;
   CreateDeviceInput: CreateDeviceInput;
@@ -258,6 +304,10 @@ export type ResolversTypes = {
   UnregisterDeviceInputDevice: UnregisterDeviceInputDevice;
   UnregisterManyDevicesInput: UnregisterManyDevicesInput;
   UnregisterManyDevicesResult: ResolverTypeWrapper<UnregisterManyDevicesResult>;
+  CapabilityInputObject: CapabilityInputObject;
+  BinaryCapabilityInput: BinaryCapabilityInput;
+  NumericCapabilityInput: NumericCapabilityInput;
+  EnumCapabilityInput: EnumCapabilityInput;
   UnregisterAllDevicesForControllerInput: UnregisterAllDevicesForControllerInput;
   Mutation: ResolverTypeWrapper<{}>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
@@ -273,9 +323,11 @@ export type ResolversParentTypes = {
   BinaryCapability: BinaryCapability;
   NumericCapability: NumericCapability;
   Float: Scalars['Float'];
+  EnumCapability: EnumCapability;
   Capability:
     | ResolversParentTypes['BinaryCapability']
-    | ResolversParentTypes['NumericCapability'];
+    | ResolversParentTypes['NumericCapability']
+    | ResolversParentTypes['EnumCapability'];
   Query: {};
   CreateDeviceInputDevice: CreateDeviceInputDevice;
   CreateDeviceInput: CreateDeviceInput;
@@ -283,6 +335,10 @@ export type ResolversParentTypes = {
   UnregisterDeviceInputDevice: UnregisterDeviceInputDevice;
   UnregisterManyDevicesInput: UnregisterManyDevicesInput;
   UnregisterManyDevicesResult: UnregisterManyDevicesResult;
+  CapabilityInputObject: CapabilityInputObject;
+  BinaryCapabilityInput: BinaryCapabilityInput;
+  NumericCapabilityInput: NumericCapabilityInput;
+  EnumCapabilityInput: EnumCapabilityInput;
   UnregisterAllDevicesForControllerInput: UnregisterAllDevicesForControllerInput;
   Mutation: {};
   Boolean: Scalars['Boolean'];
@@ -346,12 +402,32 @@ export type NumericCapabilityResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type EnumCapabilityResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['EnumCapability'] = ResolversParentTypes['EnumCapability']
+> = {
+  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  property?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >;
+  access?: Resolver<ResolversTypes['Access'], ParentType, ContextType>;
+  values?: Resolver<
+    Array<Maybe<ResolversTypes['String']>>,
+    ParentType,
+    ContextType
+  >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type CapabilityResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['Capability'] = ResolversParentTypes['Capability']
 > = {
   __resolveType: TypeResolveFn<
-    'BinaryCapability' | 'NumericCapability',
+    'BinaryCapability' | 'NumericCapability' | 'EnumCapability',
     ParentType,
     ContextType
   >;
@@ -414,6 +490,7 @@ export type Resolvers<ContextType = any> = {
   Device?: DeviceResolvers<ContextType>;
   BinaryCapability?: BinaryCapabilityResolvers<ContextType>;
   NumericCapability?: NumericCapabilityResolvers<ContextType>;
+  EnumCapability?: EnumCapabilityResolvers<ContextType>;
   Capability?: CapabilityResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   UnregisterManyDevicesResult?: UnregisterManyDevicesResultResolvers<ContextType>;

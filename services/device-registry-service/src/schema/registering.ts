@@ -8,7 +8,8 @@ import {
 } from 'nexus';
 import { v4 as uuid } from 'uuid';
 import { NexusGenInputs } from '../generated/nexus-typegen';
-import { Device, CreateDeviceInput, CreateDeviceInputDevice } from './schema';
+import { Capability, EnumCapability, NumericCapability } from '../sourceTypes';
+import { Device, Access } from './schema';
 
 function mapInputDevice(device: NexusGenInputs['CreateDeviceInputDevice']) {
   const id = uuid();
@@ -24,6 +25,28 @@ function mapInputDevice(device: NexusGenInputs['CreateDeviceInputDevice']) {
     },
   };
 }
+
+export const CreateDeviceInputDevice = inputObjectType({
+  name: 'CreateDeviceInputDevice',
+  definition(t) {
+    t.string('description');
+    t.string('name');
+    t.string('powerSource');
+    t.field('capabilities', {
+      type: list(nonNull(CapabilityInputObject)),
+    });
+  },
+});
+
+export const CreateDeviceInput = inputObjectType({
+  name: 'CreateDeviceInput',
+  definition(t) {
+    t.nonNull.field('device', {
+      type: CreateDeviceInputDevice,
+    });
+    t.nonNull.string('controller');
+  },
+});
 
 export const createDevice = mutationField('registerDevice', {
   type: 'Device',
@@ -60,6 +83,62 @@ export const CreateManyDevicesInput = inputObjectType({
   },
 });
 
+const capabilityInputObjectKeyLookup = {
+  binary: 'BinaryCapability',
+  numeric: 'NumericCapability',
+  enum: 'EnumCapability',
+} as Record<string, Capability['__typename']>;
+
+type CapabilityInput = Exclude<
+  NexusGenInputs['CapabilityInputObject'][keyof NexusGenInputs['CapabilityInputObject']],
+  null | undefined
+>;
+
+function mapInputCapability(
+  type: string,
+  inputCapability: CapabilityInput
+): Capability {
+  const typeName = capabilityInputObjectKeyLookup[type];
+
+  if (!typeName) {
+    throw new Error(`Unimplemented capability type "${type}"`);
+  }
+
+  const description = inputCapability.description ?? '';
+
+  // TODO: Casting to eg NumericCapability is technically incorrect because that casts to the resolved/stored capability
+  // type when we are actually working on the input type here. The input type can have a slightly different shape.
+  switch (typeName) {
+    case 'BinaryCapability': {
+      return {
+        __typename: typeName,
+        ...inputCapability,
+        description,
+      };
+    }
+
+    case 'NumericCapability': {
+      return {
+        __typename: typeName,
+        ...inputCapability,
+        description,
+        max: (inputCapability as NumericCapability).max ?? null,
+        min: (inputCapability as NumericCapability).min ?? null,
+        unit: (inputCapability as NumericCapability).unit ?? null,
+      };
+    }
+
+    case 'EnumCapability': {
+      return {
+        __typename: typeName,
+        ...inputCapability,
+        description,
+        values: (inputCapability as EnumCapability).values ?? [],
+      };
+    }
+  }
+}
+
 export const registerManyDevices = mutationField('registerManyDevices', {
   type: list(Device),
   args: {
@@ -71,7 +150,20 @@ export const registerManyDevices = mutationField('registerManyDevices', {
     const resolvedDevices = devices.map((device) => ({
       ...mapInputDevice(device),
       controller,
-      capabilities: [],
+      capabilities:
+        device.capabilities?.flatMap((capability) => {
+          const deviceCapabilities: Capability[] = [];
+
+          for (const [type, inputCapability] of Object.entries(capability)) {
+            if (!inputCapability) {
+              continue;
+            }
+
+            deviceCapabilities.push(mapInputCapability(type, inputCapability));
+          }
+
+          return deviceCapabilities;
+        }) ?? [],
     }));
 
     await context.store.createOrUpdateDevices(
@@ -153,3 +245,62 @@ export const unregisterAllDevicesForController = mutationField(
     },
   }
 );
+
+// This is a workaround for graphql not having union input types.
+export const CapabilityInputObject = inputObjectType({
+  name: 'CapabilityInputObject',
+  description: `
+    This is basically a workaround for GraphQL not having input unions. Ideally we would describe this type as
+    BinaryCapabilityInput | NumericCapabilityInput, instead we define an object with an optional key for each capability
+    type. This accomplishes the same thing as a union here because a device can have more than one capability, and more
+    than one capability of the same type.
+  `,
+  definition(t) {
+    t.field('binary', {
+      type: BinaryCapabilityInput,
+    });
+    t.field('numeric', {
+      type: NumericCapabilityInput,
+    });
+    t.field('enum', {
+      type: EnumCapabilityInput,
+    });
+  },
+});
+
+export const BinaryCapabilityInput = inputObjectType({
+  name: 'BinaryCapabilityInput',
+  definition(t) {
+    t.nonNull.string('property');
+    t.string('description');
+    t.nonNull.field('access', {
+      type: Access,
+    });
+  },
+});
+
+export const NumericCapabilityInput = inputObjectType({
+  name: 'NumericCapabilityInput',
+  definition(t) {
+    t.nonNull.string('property');
+    t.string('description');
+    t.nonNull.field('access', {
+      type: Access,
+    });
+    t.float('min');
+    t.float('max');
+    t.string('unit');
+  },
+});
+
+export const EnumCapabilityInput = inputObjectType({
+  name: 'EnumCapabilityInput',
+  definition(t) {
+    t.nonNull.string('property');
+    t.string('description');
+    t.nonNull.field('access', {
+      type: Access,
+    });
+    t.list.nonNull.string('values');
+  },
+});

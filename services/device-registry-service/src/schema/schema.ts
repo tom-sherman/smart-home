@@ -5,8 +5,6 @@ import {
   objectType,
   list,
   queryType,
-  mutationField,
-  arg,
   inputObjectType,
 } from 'nexus';
 
@@ -64,11 +62,27 @@ export const NumericCapability = objectType({
     t.string('unit');
   },
 });
-
+export const EnumCapability = objectType({
+  name: 'EnumCapability',
+  definition(t) {
+    t.nonNull.string('type', {
+      resolve: () => 'binary',
+    });
+    t.nonNull.string('property', {
+      resolve: (source) => source.property,
+    });
+    t.string('description');
+    t.nonNull.field('access', {
+      type: Access,
+      resolve: (source) => source.access,
+    });
+    t.nonNull.list.string('values');
+  },
+});
 export const Capability = unionType({
   name: 'Capability',
   definition(t) {
-    t.members('BinaryCapability', 'NumericCapability');
+    t.members(BinaryCapability, NumericCapability, EnumCapability);
   },
   resolveType: (source) => source.__typename,
 });
@@ -79,24 +93,5 @@ export const Query = queryType({
       type: nonNull(Device),
       resolve: (_source, _args, context) => context.store.getAllDevices(),
     });
-  },
-});
-
-export const CreateDeviceInputDevice = inputObjectType({
-  name: 'CreateDeviceInputDevice',
-  definition(t) {
-    t.string('description');
-    t.string('name');
-    t.string('powerSource');
-  },
-});
-
-export const CreateDeviceInput = inputObjectType({
-  name: 'CreateDeviceInput',
-  definition(t) {
-    t.nonNull.field('device', {
-      type: CreateDeviceInputDevice,
-    });
-    t.nonNull.string('controller');
   },
 });

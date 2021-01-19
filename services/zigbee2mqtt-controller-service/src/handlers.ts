@@ -1,7 +1,12 @@
-import { BridgeDevice } from './bridge-types';
+import {
+  BridgeDevice,
+  Capability,
+  NonLightCapability,
+  SupportedBridgeDevice,
+} from './bridge-types';
 import { createSubscriptionHandler, parseBufferAsJson } from './util';
 import { Dao } from './dao';
-import { Device } from './generated/graphql';
+import { Access, CapabilityInputObject, Device } from './generated/graphql';
 import { fetchGql } from './fetch-graphql';
 
 export interface Dependencies {
@@ -39,15 +44,25 @@ export function createHandlers({
         registerDevicesQuery,
         {
           controller: controllerName,
-          devices: bridgeDevices.map((bd) => ({
-            description: bd.definition?.description,
-            name: bd.friendly_name,
-            powerSource: bd.power_source,
-          })),
+          devices: bridgeDevices
+            .filter((bd): bd is SupportedBridgeDevice => bd.supported)
+            .map((bd) => ({
+              description: bd.definition.description,
+              name: bd.friendly_name,
+              powerSource: bd.power_source,
+              capabilities: bd.definition.exposes.flatMap((capability) =>
+                capability.type === 'light'
+                  ? capability.features.map((lightCap) =>
+                      mapCapability(lightCap)
+                    )
+                  : [mapCapability(capability)]
+              ),
+            })),
         }
       );
 
       if (registeredDevicesResponse.errors) {
+        console.log(registeredDevicesResponse.errors);
         throw new Error('Failed to store devices');
       }
 
@@ -70,6 +85,65 @@ export function createHandlers({
   );
 
   return [bridgeDeviceHandler];
+}
+
+const accessLookup = {
+  1: Access.Read,
+  2: Access.Write,
+  7: Access.Readwrite,
+};
+function mapAccess(access: number): Access {
+  const resolvedAccess = accessLookup[access as keyof typeof accessLookup] as
+    | Access
+    | undefined;
+
+  if (!resolvedAccess) {
+    throw new Error(
+      `Access of with value ${access} not implemnted in DeviceRegistry schema.`
+    );
+  }
+
+  return resolvedAccess;
+}
+
+function mapCapability(capability: NonLightCapability): CapabilityInputObject {
+  const access = mapAccess(capability.access);
+
+  // !!! IMPORTANT !!!
+  // The following return statements avoid using ...spread syntax on purpose.
+  // If we used them then we may end up sending extra properties which is a type error in graphql 🙄
+  switch (capability.type) {
+    case 'binary':
+      return {
+        binary: {
+          access,
+          property: capability.property,
+          description: capability.description,
+        },
+      };
+
+    case 'numeric':
+      return {
+        numeric: {
+          access,
+          property: capability.property,
+          description: capability.description,
+          max: capability.value_max,
+          min: capability.value_min,
+          unit: capability.unit,
+        },
+      };
+
+    case 'enum':
+      return {
+        enum: {
+          access,
+          property: capability.property,
+          description: capability.description,
+          values: capability.values,
+        },
+      };
+  }
 }
 
 interface UnregisterAllDevicesResponse {

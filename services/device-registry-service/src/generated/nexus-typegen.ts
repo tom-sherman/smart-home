@@ -11,6 +11,18 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  BinaryCapabilityInput: {
+    // input type
+    access: NexusGenEnums['Access']; // Access!
+    description?: string | null; // String
+    property: string; // String!
+  };
+  CapabilityInputObject: {
+    // input type
+    binary?: NexusGenInputs['BinaryCapabilityInput'] | null; // BinaryCapabilityInput
+    enum?: NexusGenInputs['EnumCapabilityInput'] | null; // EnumCapabilityInput
+    numeric?: NexusGenInputs['NumericCapabilityInput'] | null; // NumericCapabilityInput
+  };
   CreateDeviceInput: {
     // input type
     controller: string; // String!
@@ -18,6 +30,7 @@ export interface NexusGenInputs {
   };
   CreateDeviceInputDevice: {
     // input type
+    capabilities?: NexusGenInputs['CapabilityInputObject'][] | null; // [CapabilityInputObject!]
     description?: string | null; // String
     name?: string | null; // String
     powerSource?: string | null; // String
@@ -26,6 +39,22 @@ export interface NexusGenInputs {
     // input type
     controller: string; // String!
     devices: NexusGenInputs['CreateDeviceInputDevice'][]; // [CreateDeviceInputDevice!]!
+  };
+  EnumCapabilityInput: {
+    // input type
+    access: NexusGenEnums['Access']; // Access!
+    description?: string | null; // String
+    property: string; // String!
+    values?: string[] | null; // [String!]
+  };
+  NumericCapabilityInput: {
+    // input type
+    access: NexusGenEnums['Access']; // Access!
+    description?: string | null; // String
+    max?: number | null; // Float
+    min?: number | null; // Float
+    property: string; // String!
+    unit?: string | null; // String
   };
   UnregisterAllDevicesForControllerInput: {
     // input type
@@ -56,6 +85,7 @@ export interface NexusGenScalars {
 export interface NexusGenObjects {
   BinaryCapability: t.BinaryCapability;
   Device: t.Device;
+  EnumCapability: t.EnumCapability;
   Mutation: {};
   NumericCapability: t.NumericCapability;
   Query: {};
@@ -93,6 +123,14 @@ export interface NexusGenFieldTypes {
     id: string; // ID!
     name: string; // String!
     powerSource: string | null; // String
+  };
+  EnumCapability: {
+    // field return type
+    access: NexusGenEnums['Access']; // Access!
+    description: string | null; // String
+    property: string; // String!
+    type: string; // String!
+    values: Array<string | null>; // [String]!
   };
   Mutation: {
     // field return type
@@ -141,6 +179,14 @@ export interface NexusGenFieldTypeNames {
     id: 'ID';
     name: 'String';
     powerSource: 'String';
+  };
+  EnumCapability: {
+    // field return type name
+    access: 'Access';
+    description: 'String';
+    property: 'String';
+    type: 'String';
+    values: 'String';
   };
   Mutation: {
     // field return type name
@@ -191,7 +237,7 @@ export interface NexusGenArgTypes {
 }
 
 export interface NexusGenAbstractTypeMembers {
-  Capability: 'BinaryCapability' | 'NumericCapability';
+  Capability: 'BinaryCapability' | 'EnumCapability' | 'NumericCapability';
 }
 
 export interface NexusGenTypeInterfaces {}

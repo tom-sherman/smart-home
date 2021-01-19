@@ -14,7 +14,25 @@ type BinaryCapability {
   type: String!
 }
 
-union Capability = BinaryCapability | NumericCapability
+input BinaryCapabilityInput {
+  access: Access!
+  description: String
+  property: String!
+}
+
+union Capability = BinaryCapability | EnumCapability | NumericCapability
+
+"""
+This is basically a workaround for GraphQL not having input unions. Ideally we would describe this type as
+BinaryCapabilityInput | NumericCapabilityInput, instead we define an object with an optional key for each capability
+type. This accomplishes the same thing as a union here because a device can have more than one capability, and more
+than one capability of the same type.
+"""
+input CapabilityInputObject {
+  binary: BinaryCapabilityInput
+  enum: EnumCapabilityInput
+  numeric: NumericCapabilityInput
+}
 
 input CreateDeviceInput {
   controller: String!
@@ -22,6 +40,7 @@ input CreateDeviceInput {
 }
 
 input CreateDeviceInputDevice {
+  capabilities: [CapabilityInputObject!]
   description: String
   name: String
   powerSource: String
@@ -39,6 +58,21 @@ type Device {
   id: ID!
   name: String!
   powerSource: String
+}
+
+type EnumCapability {
+  access: Access!
+  description: String
+  property: String!
+  type: String!
+  values: [String]!
+}
+
+input EnumCapabilityInput {
+  access: Access!
+  description: String
+  property: String!
+  values: [String!]
 }
 
 type Mutation {
@@ -62,6 +96,15 @@ type NumericCapability {
   min: Float
   property: String!
   type: String!
+  unit: String
+}
+
+input NumericCapabilityInput {
+  access: Access!
+  description: String
+  max: Float
+  min: Float
+  property: String!
   unit: String
 }
 

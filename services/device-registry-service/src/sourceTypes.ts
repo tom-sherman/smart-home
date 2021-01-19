@@ -26,10 +26,10 @@ export interface BinaryCapability extends BaseCapability {
 
 export interface NumericCapability extends BaseCapability {
   __typename: 'NumericCapability';
-  max: number;
-  min: number;
+  max: number | null;
+  min: number | null;
   // TODO: enum?
-  unit?: string;
+  unit: string | null;
 }
 
 export interface EnumCapability extends BaseCapability {
@@ -37,4 +37,4 @@ export interface EnumCapability extends BaseCapability {
   values: string[];
 }
 
-export type Capability = BinaryCapability | NumericCapability;
+export type Capability = BinaryCapability | NumericCapability | EnumCapability;
