@@ -14,6 +14,7 @@ const dependencyContainer = {
   dao: new Dao(new Store('service_store')),
   controllerName: 'service.controller.zigbee2mqtt',
   deviceRegistryEndpoint: 'http://localhost:4000',
+  mqtt: client,
 };
 
 const handlers = createHandlers(dependencyContainer);
