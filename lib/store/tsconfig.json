@@ -9,6 +9,7 @@
     "esModuleInterop": true,
     "noUncheckedIndexedAccess": true,
     "outDir": "dist",
-    "declaration": true
+    "declaration": true,
+    "target": "ES2018"
   }
 }

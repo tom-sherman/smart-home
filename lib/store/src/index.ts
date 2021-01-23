@@ -1,91 +1,86 @@
-import { join } from 'path';
-import { promises as fs } from 'fs';
-import mkdirp from 'mkdirp';
-
-const dataFileName = 'data.json';
+import level, { Level, LevelOptions } from 'level';
 
 type BatchOperations<T> =
   | { type: 'set'; key: string; value: T }
   | { type: 'delete'; key: string };
 
+/**
+ * T must be able to be serializable as JSON.
+ */
 export class Store<T> {
-  private readonly location: string;
-  private readonly dataFileLocation: string;
-  private connection: Promise<void> | null = null;
+  private db: Level;
 
-  constructor(name: string) {
-    this.location = join(__dirname, name);
-    this.dataFileLocation = join(this.location, dataFileName);
-  }
-
-  private connect() {
-    if (!this.connection) {
-      this.connection = Promise.resolve().then(async () => {
-        await mkdirp(this.location);
-        await fs.writeFile(this.dataFileLocation, '{}');
-      });
+  constructor(location: string, options?: LevelOptions);
+  constructor(location: Level);
+  constructor(param: Level | string) {
+    // Support injecting a db and also a
+    if (typeof param === 'string') {
+      this.db = level(param);
+    } else {
+      this.db = param;
     }
-
-    return this.connection;
-  }
-
-  private async getAll() {
-    await this.connect();
-    const file = String(await fs.readFile(this.dataFileLocation));
-    return JSON.parse(file) as Record<string, T>;
-  }
-
-  private async writeStore(store: Record<string, T>): Promise<void> {
-    await fs.writeFile(this.dataFileLocation, JSON.stringify(store));
   }
 
   async get(key: string): Promise<T | null> {
-    await this.connect();
-    const store = await this.getAll();
+    try {
+      const result = await this.db.get(key, { valueEncoding: 'json' });
+      return result;
+    } catch (error) {
+      if (error instanceof level.errors.NotFoundError) {
+        return null;
+      }
 
-    return store[key] ?? null;
+      throw error;
+    }
   }
 
   async set(key: string, value: T): Promise<void> {
-    await this.connect();
-    const store = await this.getAll();
-    store[key] = value;
-
-    await this.writeStore(store);
+    await this.db.put(key, value, { valueEncoding: 'json' });
   }
 
   async delete(key: string): Promise<void> {
-    await this.connect();
-    const store = await this.getAll();
-    delete store[key];
-
-    await this.writeStore(store);
+    await this.db.del(key);
   }
 
   async keys(): Promise<string[]> {
-    await this.connect();
-    return Object.keys(await this.getAll());
+    const stream = this.db.createKeyStream();
+    const keys: string[] = [];
+
+    for await (const chunk of stream) {
+      keys.push(chunk);
+    }
+
+    return keys;
   }
 
   async values(): Promise<T[]> {
-    await this.connect();
-    return Object.values(await this.getAll());
+    const stream = this.db.createValueStream();
+    const values: T[] = [];
+
+    for await (const chunk of stream) {
+      console.log(chunk);
+      values.push(JSON.parse(chunk));
+    }
+
+    return values;
   }
 
   async batch(ops: BatchOperations<T>[]): Promise<void> {
-    const store = await this.getAll();
-
-    for (const op of ops) {
-      if (op.type === 'set') {
-        store[op.key] = op.value;
-      } else if (op.type === 'delete') {
-        delete store[op.key];
-      } else {
-        // @ts-expect-error Expect an error here in case we ever add a new op type, this will not compile.
-        throw new Error(`Unexpected operation type "${op.type}"`);
+    await this.db.batch(
+      ops.map((op) =>
+        op.type === 'delete'
+          ? {
+              ...op,
+              type: 'del',
+            }
+          : {
+              ...op,
+              type: 'put',
+            }
+      ),
+      {
+        valueEncoding: 'json',
       }
-    }
-
-    this.writeStore(store);
+    );
   }
 }
