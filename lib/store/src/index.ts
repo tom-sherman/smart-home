@@ -58,7 +58,6 @@ export class Store<T> {
     const values: T[] = [];
 
     for await (const chunk of stream) {
-      console.log(chunk);
       values.push(JSON.parse(chunk));
     }
 
