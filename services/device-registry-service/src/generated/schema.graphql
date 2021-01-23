@@ -110,6 +110,7 @@ input NumericCapabilityInput {
 
 type Query {
   allDevices: [Device!]!
+  devicesForController(controller: String!): [Device!]!
 }
 
 input UnregisterAllDevicesForControllerInput {

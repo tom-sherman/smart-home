@@ -156,6 +156,7 @@ export interface NexusGenFieldTypes {
   Query: {
     // field return type
     allDevices: NexusGenRootTypes['Device'][]; // [Device!]!
+    devicesForController: NexusGenRootTypes['Device'][]; // [Device!]!
   };
   UnregisterManyDevicesResult: {
     // field return type
@@ -208,6 +209,7 @@ export interface NexusGenFieldTypeNames {
   Query: {
     // field return type name
     allDevices: 'Device';
+    devicesForController: 'Device';
   };
   UnregisterManyDevicesResult: {
     // field return type name
@@ -232,6 +234,12 @@ export interface NexusGenArgTypes {
     unregisterManyDevices: {
       // args
       input: NexusGenInputs['UnregisterManyDevicesInput']; // UnregisterManyDevicesInput!
+    };
+  };
+  Query: {
+    devicesForController: {
+      // args
+      controller: string; // String!
     };
   };
 }

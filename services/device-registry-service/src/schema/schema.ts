@@ -6,6 +6,8 @@ import {
   list,
   queryType,
   inputObjectType,
+  queryField,
+  stringArg,
 } from 'nexus';
 
 export const Device = objectType({
@@ -87,11 +89,16 @@ export const Capability = unionType({
   resolveType: (source) => source.__typename,
 });
 
-export const Query = queryType({
-  definition(t) {
-    t.nonNull.list.field('allDevices', {
-      type: nonNull(Device),
-      resolve: (_source, _args, context) => context.store.getAllDevices(),
-    });
+export const allDevices = queryField('allDevices', {
+  type: nonNull(list(nonNull(Device))),
+  resolve: (_source, _args, context) => context.store.getAllDevices(),
+});
+
+export const devicesForController = queryField('devicesForController', {
+  type: nonNull(list(nonNull(Device))),
+  args: {
+    controller: nonNull(stringArg()),
   },
+  resolve: (_source, { controller }, context) =>
+    context.store.getAllDevicesForController(controller),
 });
