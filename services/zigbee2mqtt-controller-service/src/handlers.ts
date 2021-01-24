@@ -24,29 +24,49 @@ export function createHandlers({
 }: Dependencies) {
   const bridgeDeviceHandler = createSubscriptionHandler(
     `${rootTopic}/bridge/devices`,
-    async function bridgeDeviceHandler(buf) {
-      // Unregister all of our devices from the registry.
-      const unregisterAllDevicesResponse = await fetchGql<UnregisterAllDevicesResponse>(
-        deviceRegistryEndpoint,
-        unregisterAllDevicesQuery,
-        { controller: controllerName }
+    async function bridgeDeviceHandler(payload) {
+      const currentLocalDevices = await dao.getAllDevices();
+      console.log(`${currentLocalDevices.length} devices stored locally.`);
+
+      const bridgeDevices = parseBufferAsJson<BridgeDevice[]>(payload);
+
+      // Supported devices in the payload which are not currently stored locally
+      // ie. New devices
+      const devicesToRegister = bridgeDevices.filter(
+        (bridgeDevice): bridgeDevice is SupportedBridgeDevice =>
+          bridgeDevice.supported &&
+          currentLocalDevices.every(
+            (localDevice) =>
+              localDevice.bridgeDevice.ieee_address !==
+              bridgeDevice.ieee_address
+          )
       );
 
-      if (unregisterAllDevicesResponse.errors) {
-        throw new Error('Failed to unregister devices.');
-      }
+      // Devices which are stored locally but not in the payload
+      // We need to unregister them as they've been removed from the network
+      const devicesToUnregister = currentLocalDevices
+        .filter((localDevice) =>
+          bridgeDevices.every(
+            (bridgeDevice) =>
+              bridgeDevice.ieee_address !==
+              localDevice.bridgeDevice.ieee_address
+          )
+        )
+        .map(({ id }) => ({ id }));
 
-      const bridgeDevices = parseBufferAsJson<BridgeDevice[]>(buf);
+      console.log(`Registering ${devicesToRegister.length} devices`);
+      console.log(`Unregistering ${devicesToUnregister.length} devices`);
 
-      // Register devices in the registry
-      const registeredDevicesResponse = await fetchGql<RegisterDevicesResponse>(
-        deviceRegistryEndpoint,
-        registerDevicesQuery,
-        {
-          controller: controllerName,
-          devices: bridgeDevices
-            .filter((bd): bd is SupportedBridgeDevice => bd.supported)
-            .map((bd) => ({
+      const [
+        registeredDevicesResponse,
+        unregisterAllDevicesResponse,
+      ] = await Promise.all([
+        fetchGql<RegisterDevicesResponse>(
+          deviceRegistryEndpoint,
+          registerDevicesQuery,
+          {
+            controller: controllerName,
+            devices: devicesToRegister.map((bd) => ({
               description: bd.definition.description,
               name: bd.friendly_name,
               powerSource: bd.power_source,
@@ -58,29 +78,47 @@ export function createHandlers({
                   : [mapCapability(capability)]
               ),
             })),
-        }
-      );
+          }
+        ),
+        fetchGql<UnregisterManyDevicesResponse>(
+          deviceRegistryEndpoint,
+          unregisterManyDevicesQuery,
+          { devices: devicesToUnregister }
+        ),
+      ]);
 
       if (registeredDevicesResponse.errors) {
         console.log(registeredDevicesResponse.errors);
         throw new Error('Failed to store devices');
       }
 
-      // We're relying on the API returning us the registered devices in the order we sent them
-      const records = Object.fromEntries(
-        registeredDevicesResponse.data.registerManyDevices.map(
-          (device, index) => [
-            device.id,
-            {
-              bridgeDevice: bridgeDevices[index],
-            },
-          ]
-        )
-      );
-      await dao.storeDevices(records);
+      if (unregisterAllDevicesResponse.errors) {
+        console.log(unregisterAllDevicesResponse.errors);
+        throw new Error('Failed to unregister devices.');
+      }
+
       console.log(
-        `Done registering ${registeredDevicesResponse.data.registerManyDevices.length} devices`
+        `Storing ${registeredDevicesResponse.data.registerManyDevices.length} new devices`
       );
+      console.log(
+        `Deleting ${unregisterAllDevicesResponse.data.unregisterManyDevices.deletedDeviceIds.length} devices`
+      );
+
+      await Promise.all([
+        // // We're relying on the API returning us the registered devices in the order we sent them
+        dao.storeDevices(
+          registeredDevicesResponse.data.registerManyDevices.map(
+            (device, index) => ({
+              id: device.id,
+              bridgeDevice: devicesToRegister[index],
+            })
+          )
+        ),
+        dao.removeDevices(
+          unregisterAllDevicesResponse.data.unregisterManyDevices
+            .deletedDeviceIds
+        ),
+      ]);
     }
   );
 
@@ -146,13 +184,15 @@ function mapCapability(capability: NonLightCapability): CapabilityInputObject {
   }
 }
 
-interface UnregisterAllDevicesResponse {
-  deletedDeviceIds: string[];
+interface UnregisterManyDevicesResponse {
+  unregisterManyDevices: {
+    deletedDeviceIds: string[];
+  };
 }
 
-const unregisterAllDevicesQuery = `
-  mutation UnregisterZigbeeDevices($controller: String!) {
-    unregisterAllDevicesForController(input: { controller: $controller }) {
+const unregisterManyDevicesQuery = `
+  mutation UnregisterManyZigbeeDevices($devices: [UnregisterDeviceInputDevice!]!) {
+    unregisterManyDevices(input: {  devices: $devices }) {
       deletedDeviceIds
     }
   }

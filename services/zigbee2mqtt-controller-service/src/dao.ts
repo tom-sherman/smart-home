@@ -4,17 +4,27 @@ import { Device } from './generated/graphql';
 
 interface DeviceRecord {
   bridgeDevice: BridgeDevice;
+  id: string;
 }
 
 export class Dao {
   constructor(private store: Store<DeviceRecord>) {}
 
-  async storeDevices(devices: Record<string, DeviceRecord>): Promise<void> {
+  async storeDevices(devices: DeviceRecord[]): Promise<void> {
     await this.store.batch(
-      Object.entries(devices).map(([uuid, record]) => ({
+      devices.map((record) => ({
         type: 'set',
-        key: uuid,
+        key: record.id,
         value: record,
+      }))
+    );
+  }
+
+  async removeDevices(deviceIds: string[]): Promise<void> {
+    await this.store.batch(
+      deviceIds.map((id) => ({
+        type: 'delete',
+        key: id,
       }))
     );
   }

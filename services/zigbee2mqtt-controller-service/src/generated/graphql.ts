@@ -67,11 +67,6 @@ export type EnumCapability = {
 
 export type Capability = BinaryCapability | NumericCapability | EnumCapability;
 
-export type Query = {
-  __typename?: 'Query';
-  allDevices: Array<Device>;
-};
-
 export type CreateDeviceInputDevice = {
   description?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
@@ -137,6 +132,16 @@ export type EnumCapabilityInput = {
 };
 
 export type UnregisterAllDevicesForControllerInput = {
+  controller: Scalars['String'];
+};
+
+export type Query = {
+  __typename?: 'Query';
+  allDevices: Array<Device>;
+  devicesForController: Array<Device>;
+};
+
+export type QueryDevicesForControllerArgs = {
   controller: Scalars['String'];
 };
 
@@ -297,7 +302,6 @@ export type ResolversTypes = {
     | ResolversTypes['BinaryCapability']
     | ResolversTypes['NumericCapability']
     | ResolversTypes['EnumCapability'];
-  Query: ResolverTypeWrapper<{}>;
   CreateDeviceInputDevice: CreateDeviceInputDevice;
   CreateDeviceInput: CreateDeviceInput;
   CreateManyDevicesInput: CreateManyDevicesInput;
@@ -309,6 +313,7 @@ export type ResolversTypes = {
   NumericCapabilityInput: NumericCapabilityInput;
   EnumCapabilityInput: EnumCapabilityInput;
   UnregisterAllDevicesForControllerInput: UnregisterAllDevicesForControllerInput;
+  Query: ResolverTypeWrapper<{}>;
   Mutation: ResolverTypeWrapper<{}>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 };
@@ -328,7 +333,6 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['BinaryCapability']
     | ResolversParentTypes['NumericCapability']
     | ResolversParentTypes['EnumCapability'];
-  Query: {};
   CreateDeviceInputDevice: CreateDeviceInputDevice;
   CreateDeviceInput: CreateDeviceInput;
   CreateManyDevicesInput: CreateManyDevicesInput;
@@ -340,6 +344,7 @@ export type ResolversParentTypes = {
   NumericCapabilityInput: NumericCapabilityInput;
   EnumCapabilityInput: EnumCapabilityInput;
   UnregisterAllDevicesForControllerInput: UnregisterAllDevicesForControllerInput;
+  Query: {};
   Mutation: {};
   Boolean: Scalars['Boolean'];
 };
@@ -433,17 +438,6 @@ export type CapabilityResolvers<
   >;
 };
 
-export type QueryResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
-> = {
-  allDevices?: Resolver<
-    Array<ResolversTypes['Device']>,
-    ParentType,
-    ContextType
-  >;
-};
-
 export type UnregisterManyDevicesResultResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['UnregisterManyDevicesResult'] = ResolversParentTypes['UnregisterManyDevicesResult']
@@ -454,6 +448,23 @@ export type UnregisterManyDevicesResultResolvers<
     ContextType
   >;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type QueryResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
+> = {
+  allDevices?: Resolver<
+    Array<ResolversTypes['Device']>,
+    ParentType,
+    ContextType
+  >;
+  devicesForController?: Resolver<
+    Array<ResolversTypes['Device']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryDevicesForControllerArgs, 'controller'>
+  >;
 };
 
 export type MutationResolvers<
@@ -492,8 +503,8 @@ export type Resolvers<ContextType = any> = {
   NumericCapability?: NumericCapabilityResolvers<ContextType>;
   EnumCapability?: EnumCapabilityResolvers<ContextType>;
   Capability?: CapabilityResolvers<ContextType>;
-  Query?: QueryResolvers<ContextType>;
   UnregisterManyDevicesResult?: UnregisterManyDevicesResultResolvers<ContextType>;
+  Query?: QueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
 };
 
