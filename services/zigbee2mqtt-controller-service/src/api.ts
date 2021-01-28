@@ -65,6 +65,8 @@ router.patch('/device/:id', async (ctx) => {
     case 'binary': {
       ctx.deps.mqtt.publish(
         `${ctx.deps.rootTopic}/${device.bridgeDevice.friendly_name}/set`,
+        // TODO: data.action may not match the value we need to send in the channel
+        // eg ON = true, OFF = false, TOGGLE = 2
         JSON.stringify({
           [result.data.property]: result.data.action,
         })
