@@ -23,14 +23,27 @@ export type BridgeDevice = BridgeDeviceProperties &
 
 export type SupportedBridgeDevice = BridgeDevice & { supported: true };
 
-export type NonLightCapability = Exclude<Capability, { type: 'light' }>;
+export type NonFeatureCapability = Exclude<
+  Capability,
+  { type: FeatureCapabilityType }
+>;
+
+export const featureCapabilityTypes = ['light', 'switch'] as const;
+
+export type FeatureCapabilityType = typeof featureCapabilityTypes[number];
+
+export function isFeatureCapability(
+  capability: Capability
+): capability is Extract<Capability, { type: FeatureCapabilityType }> {
+  return featureCapabilityTypes.some((type) => type === capability.type);
+}
 
 export type Capability =
   | {
-      // For some reason some lights have a light capability that has multiple capabilities nested within?? Weird!
-      type: 'light';
+      // For some reason there is a capability that has multiple capabilities nested within?? Weird!
+      type: FeatureCapabilityType;
       access: number;
-      features: NonLightCapability[];
+      features: NonFeatureCapability[];
     }
   | {
       type: 'numeric';

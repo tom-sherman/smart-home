@@ -1,7 +1,8 @@
 import {
   BridgeDevice,
   Capability,
-  NonLightCapability,
+  isFeatureCapability,
+  NonFeatureCapability,
   SupportedBridgeDevice,
 } from './bridge-types';
 import { createSubscriptionHandler, parseBufferAsJson } from './util';
@@ -71,7 +72,7 @@ export function createHandlers({
               name: bd.friendly_name,
               powerSource: bd.power_source,
               capabilities: bd.definition.exposes.flatMap((capability) =>
-                capability.type === 'light'
+                isFeatureCapability(capability)
                   ? capability.features.map((lightCap) =>
                       mapCapability(lightCap)
                     )
@@ -144,7 +145,9 @@ function mapAccess(access: number): Access {
   return resolvedAccess;
 }
 
-function mapCapability(capability: NonLightCapability): CapabilityInputObject {
+function mapCapability(
+  capability: NonFeatureCapability
+): CapabilityInputObject {
   const access = mapAccess(capability.access);
 
   // !!! IMPORTANT !!!
