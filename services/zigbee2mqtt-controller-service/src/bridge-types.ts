@@ -21,30 +21,24 @@ export type BridgeDevice = BridgeDeviceProperties &
       }
   );
 
-export type SupportedBridgeDevice = BridgeDevice & { supported: true };
+export type SupportedBridgeDevice = Extract<BridgeDevice, { supported: true }>;
 
-export type NonFeatureCapability = Exclude<
-  Capability,
-  { type: FeatureCapabilityType }
->;
+export const specificCapabilityTypes = ['light', 'switch'] as const;
 
-export const featureCapabilityTypes = ['light', 'switch'] as const;
+export type SpecificCapabilityType = typeof specificCapabilityTypes[number];
 
-export type FeatureCapabilityType = typeof featureCapabilityTypes[number];
-
-export function isFeatureCapability(
+export function isSpecificCapability(
   capability: Capability
-): capability is Extract<Capability, { type: FeatureCapabilityType }> {
-  return featureCapabilityTypes.some((type) => type === capability.type);
+): capability is SpecificCapability {
+  return specificCapabilityTypes.some((type) => type === capability.type);
 }
 
-export type Capability =
-  | {
-      // For some reason there is a capability that has multiple capabilities nested within?? Weird!
-      type: FeatureCapabilityType;
-      access: number;
-      features: NonFeatureCapability[];
-    }
+export type SpecificCapability = {
+  type: SpecificCapabilityType;
+  features: GenericCapability[];
+};
+
+export type GenericCapability =
   | {
       type: 'numeric';
       property: string;
@@ -72,4 +66,18 @@ export type Capability =
       property: string;
       name: string;
       values: string[];
+    }
+  | {
+      type: 'text';
+      name: string;
+      property: string;
+      access: number;
+    }
+  | {
+      type: 'composite';
+      name: string;
+      property: string;
+      features: GenericCapability;
     };
+
+export type Capability = SpecificCapability | GenericCapability;

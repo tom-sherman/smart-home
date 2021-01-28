@@ -1,8 +1,7 @@
 import {
   BridgeDevice,
-  Capability,
-  isFeatureCapability,
-  NonFeatureCapability,
+  GenericCapability,
+  isSpecificCapability,
   SupportedBridgeDevice,
 } from './bridge-types';
 import { createSubscriptionHandler, parseBufferAsJson } from './util';
@@ -72,7 +71,7 @@ export function createHandlers({
               name: bd.friendly_name,
               powerSource: bd.power_source,
               capabilities: bd.definition.exposes.flatMap((capability) =>
-                isFeatureCapability(capability)
+                isSpecificCapability(capability)
                   ? capability.features.map((lightCap) =>
                       mapCapability(lightCap)
                     )
@@ -145,9 +144,11 @@ function mapAccess(access: number): Access {
   return resolvedAccess;
 }
 
-function mapCapability(
-  capability: NonFeatureCapability
-): CapabilityInputObject {
+function mapCapability(capability: GenericCapability): CapabilityInputObject {
+  if (capability.type === 'composite') {
+    throw new Error('composite capabilities are not currently implemented');
+  }
+
   const access = mapAccess(capability.access);
 
   // !!! IMPORTANT !!!
@@ -184,6 +185,10 @@ function mapCapability(
           values: capability.values,
         },
       };
+
+    case 'text': {
+      throw new Error('text capability not yet implemented');
+    }
   }
 }
 
